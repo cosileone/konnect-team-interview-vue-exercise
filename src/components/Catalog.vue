@@ -1,68 +1,137 @@
 <template>
-  <div>
-    <input
-      v-model="searchTerm"
-      placeholder="search term"
-    >
-    <div class="catalog">
-      <KCard
-        v-for="service in services"
-        :key="service.id"
-        class="service"
+  <div class="services-page">
+    <div class="services-page__header">
+      <h1 class="page-title">
+        Services
+      </h1>
+      <KButton
+        type="button"
+        @click="handleNewServiceButtonClick"
       >
-        <template slot="title">
-          {{ service.name }}
-        </template>
-        <template slot="body">
-          {{ service.description }}
-        </template>
-      </KCard>
+        Add New Service
+      </KButton>
     </div>
+    <div class="services-page__search">
+      <KSearchInput
+        v-model="searchTerm"
+        type="search"
+        placeholder="Search"
+      />
+    </div>
+    <div class="catalog">
+      <ServiceCard
+        v-for="service in paginatedServices"
+        :key="service.id"
+        :service="service"
+        class="service"
+        @click.native="navigateToService(service.id)"
+      />
+    </div>
+    <Pagination
+      v-model="page"
+      :total-count="filteredResultsCount"
+      :page-size="resultLimit"
+    />
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import KCard from '@kongponents/kcard'
+<script>
+import { mapActions, mapGetters } from 'vuex'
+import KSearchInput from '@/components/KSearchInput.vue'
+import KButton from '@/components/KButton.vue'
+import ServiceCard from '@/components/ServiceCard.vue'
+import Pagination from '@/components/Pagination.vue'
 import axios from 'axios'
 
-export default Vue.extend({
+export default {
   name: 'Catalog',
   components: {
-    KCard
+    ServiceCard,
+    KButton,
+    KSearchInput,
+    Pagination
   },
   data () {
     return {
-      services: [],
-      filteredServices: [],
-      searchTerm: ''
+      searchTerm: '',
+      page: 0,
+      resultLimit: 12
+    }
+  },
+  computed: {
+    ...mapGetters('services', [
+      'filterServices'
+    ]),
+    filteredServices () {
+      return this.filterServices({
+        searchTerm: this.searchTerm
+      })
+    },
+    paginatedServices({ page, resultLimit }) {
+      const startIndex = page * resultLimit
+
+      return this.filteredServices.slice(startIndex, startIndex + resultLimit)
+    },
+    filteredResultsCount () {
+      return this.filteredServices.length
     }
   },
   watch: {
     searchTerm (val) {
-      console.log(val)
+      this.page = 0
     }
   },
-  mounted () {
-    this.fetchServices()
+  async mounted () {
+    const { data } = await this.fetchServices()
+
+    await this.setServices(data)
   },
   methods: {
+    ...mapActions('services', [
+      'setServices'
+    ]),
     fetchServices () {
-      axios.get('/api/service_packages').then((res) => {
-        this.services = res.data
-      })
+      return axios.get('/api/service_packages').then(res => res)
+    },
+    handleNewServiceButtonClick () {
+      // no specified functionality yet
+    },
+    navigateToService (serviceId) {
+      this.$router.push({ name: 'ServiceDetail', params: { serviceId } })
     }
   }
-})
+}
 </script>
 
 <style lang="scss">
+.page-title {
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 28px;
+  margin-bottom: 28px;
+
+  color: #0A2B66;
+}
+
+.services-page {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 942px;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__search {
+    margin-bottom: 24px;
+  }
+}
+
 .catalog {
   display: flex;
   flex-wrap: wrap;
-}
-.service {
-  width: 200px;
-  margin: 10px;
 }
 </style>

@@ -8,7 +8,7 @@ module.exports = () => {
     data.service_packages.push({
       id: faker.random.uuid(),
       name: faker.commerce.productName(),
-      description: faker.hacker.phrase() + faker.company.catchPhrase(),
+      description: faker.hacker.phrase() + ' ' + faker.company.catchPhrase(),
       versions: (() => {
         return [...Array(faker.random.number).keys()].map(() => ({
           id: faker.random.uuid(),

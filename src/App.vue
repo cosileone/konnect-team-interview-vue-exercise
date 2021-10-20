@@ -1,33 +1,38 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">
-        Home
-      </router-link>
-    </div>
+    <TheTopNavBar />
     <router-view />
   </div>
 </template>
 
+<script>
+import TheTopNavBar from '@/components/TheTopNavBar.vue'
+
+export default {
+  name: 'App',
+  components: {
+    TheTopNavBar
+  }
+}
+</script>
+
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+* { box-sizing: border-box; padding: 0; margin: 0; }
+
+:root {
+  --blue-500: #1456CB;
+  --blue-300: #A6C6FF;
 }
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+#app {
+  color: rgba(0, 0, 0, 0.45);
+  font-family: Roboto, 'sans-serif';
+  font-style: normal;
+  font-weight: normal;
+  padding-bottom: 80px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 </style>
