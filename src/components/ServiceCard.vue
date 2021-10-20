@@ -38,7 +38,7 @@ export default {
 <style lang="scss" scoped>
 .service-card {
   cursor: pointer;
-  margin: 0 auto 32px 0;
+  margin: 0 27px 32px 0;
   height: 181px;
   width: 215px;
 

@@ -23,7 +23,6 @@
         v-for="service in paginatedServices"
         :key="service.id"
         :service="service"
-        class="service"
         @click.native="navigateToService(service.id)"
       />
     </div>
